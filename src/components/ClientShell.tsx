@@ -7,12 +7,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AvailabilityModal from '@/components/AvailabilityModal';
-import Loader from '@/components/Loader';
+// import Loader from '@/components/Loader';
 import PageTransition from '@/components/PageTransition';
+import { usePathname } from 'next/navigation';
 
 type BookingType = 'room' | 'hall' | 'dining' | 'event';
 
-const BookingContext = createContext<{ handleOpenBooking: (type?: BookingType) => void }>({
+const BookingContext = createContext<{
+  handleOpenBooking: (type?: BookingType, itemName?: string) => void;
+}>({
   handleOpenBooking: () => {},
 });
 export const useBooking = () => useContext(BookingContext);
@@ -20,6 +23,7 @@ export const useBooking = () => useContext(BookingContext);
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [bookingType, setBookingType] = useState<BookingType>('room');
+  const [bookingItemName, setBookingItemName] = useState<string | undefined>(undefined);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
 
@@ -32,10 +36,10 @@ export default function ClientShell({ children }: { children: React.ReactNode })
   const mousePos = useRef({ x: -100, y: -100 });
   const isHovered = useRef(false);
 
-  const handleOpenBooking = useCallback((type: BookingType = 'room') => {
-    // Close first if already open (type switch), then reopen with new type
+  const handleOpenBooking = useCallback((type: BookingType = 'room', itemName?: string) => {
     setIsBookingOpen(false);
     setBookingType(type);
+    setBookingItemName(itemName);
     setIsBookingOpen(true);
   }, []);
 
@@ -144,13 +148,16 @@ export default function ClientShell({ children }: { children: React.ReactNode })
     return () => { trigger.kill(); clearTimeout(scrollTimeout); };
   }, []);
 
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+
   return (
     <BookingContext.Provider value={{ handleOpenBooking }}>
       <AnimatePresence mode="wait">
-        {isLoading && <Loader key="loader" onComplete={() => setIsLoading(false)} />}
+        {/* {isLoading && <Loader key="loader" onComplete={() => setIsLoading(false)} />} */}
       </AnimatePresence>
 
-      <div className="relative min-h-screen bg-[#0A0908] text-[#F2ECE2] font-sans overflow-x-hidden selection:bg-[#C4A472]/20 selection:text-[#C4A472]">
+      <div className="relative min-h-screen bg-[#0A0908] text-[#F2ECE2] font-sans overflow-x-hidden">
 
         {/* Grain: isolated layer, will-change keeps it off main thread */}
         <div className="cinematic-grain fixed inset-0 pointer-events-none z-[5]" style={{ willChange: 'transform' }} />
@@ -176,35 +183,40 @@ export default function ClientShell({ children }: { children: React.ReactNode })
 
         <PageTransition>{children}</PageTransition>
 
-        {/* Floating availability button */}
-        <motion.button
-          ref={btnRef}
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ delay: 1.5, duration: 1, ease: [0.33, 1, 0.68, 1] }}
-          onClick={() => handleOpenBooking('room')}
-          className="fixed bottom-7 right-7 z-30 h-12 bg-[#161412]/90 border border-[#C4A472]/50 hover:border-[#C4A472] flex items-center justify-start shadow-[0_8px_40px_rgba(0,0,0,0.5)] cursor-pointer focus:outline-none rounded-full overflow-hidden select-none"
-          style={{ width: '190px', willChange: 'width' }}
-        >
-          <div className="flex items-center h-full relative px-5">
-  <div className="absolute left-[18px] w-3 h-3 flex items-center justify-center">
-    <span className="h-2 w-2 rounded-full bg-[#C4A472] relative block">
-      <span className="absolute -inset-1 rounded-full bg-[#C4A472]/40 animate-ping" />
-    </span>
-  </div>
+        {/* Floating availability button — hidden on home page */}
+        {!isHomePage && (
+          <motion.button
+            ref={btnRef}
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 1, ease: [0.33, 1, 0.68, 1] }}
+            onClick={() => handleOpenBooking('room')}
+            className="fixed bottom-7 right-7 z-30 h-12 bg-[#161412]/90 border border-[#C4A472]/50 hover:border-[#C4A472] flex items-center justify-start shadow-[0_8px_40px_rgba(0,0,0,0.5)] cursor-pointer focus:outline-none rounded-full overflow-hidden select-none"
+            style={{ width: '190px', willChange: 'width' }}
+          >
+            <div className="flex items-center h-full w-full relative">
+              <div className="absolute left-[18px] w-3 h-3 flex items-center justify-center">
+                <span className="h-2 w-2 rounded-full bg-[#C4A472] relative block">
+                  <span className="absolute -inset-1 rounded-full bg-[#C4A472]/40 animate-ping" />
+                </span>
+              </div>
+              <div ref={textRef} className="pl-[42px] pr-5 text-[10px] tracking-[0.25em] font-sans font-semibold uppercase text-[#C4A472] whitespace-nowrap">
+                Check Availability
+              </div>
+            </div>
+          </motion.button>
+        )}
 
-  <div
-    ref={textRef}
-    className="pl-[20px] text-[10px] tracking-[0.25em] font-sans font-semibold uppercase text-[#C4A472]"
-  >
-    Check Availability
-  </div>
-</div>
-        </motion.button>
+        <AvailabilityModal
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          initialType={bookingType}
+          initialRoomName={bookingType === 'room' ? bookingItemName : undefined}
+          initialHallName={bookingType === 'hall' ? bookingItemName : undefined}
+        />
 
-        <AvailabilityModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} initialType={bookingType} />
-
-        <Footer onOpenBooking={() => handleOpenBooking('room')} />
+        {/* Footer — hidden on home page */}
+        {!isHomePage && <Footer onOpenBooking={() => handleOpenBooking('room')} />}
       </div>
     </BookingContext.Provider>
   );
