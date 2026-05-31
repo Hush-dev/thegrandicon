@@ -55,9 +55,9 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           <button
             id="nav-logo-btn"
             onClick={() => handleNavClick('home')}
-            className="group flex items-center gap-3 cursor-pointer text-left focus:outline-none"
+            className="group flex items-center gap-2.5 cursor-pointer text-left focus:outline-none"
           >
-            <div className="relative w-10 h-10 flex items-center justify-center rounded-full bg-[#161412] border border-[#C4A472]/40 group-hover:border-[#C4A472]/80 group-hover:scale-105 transition-colors duration-500 overflow-hidden shadow-md">
+            <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-[#161412] border border-[#C4A472]/40 group-hover:border-[#C4A472]/80 group-hover:scale-105 transition-all duration-500 overflow-hidden shadow-lg">
               <img
                 src="/thegrandicon_logo.webp"
                 alt="The Grand Icon Logo"
@@ -66,12 +66,12 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
               />
             </div>
             <div>
-              <span className="block font-serif text-[15px] md:text-lg tracking-[0.2em] uppercase font-light text-[#F2ECE2] group-hover:text-[#C4A472] transition-colors duration-500">
-                The Grand Icon
-              </span>
-              <span className="block text-[9px] tracking-[0.3em] font-mono text-[#7A7068] uppercase -mt-0.5">
+              <span className="block font-serif text-[18px] md:text-[22px] tracking-[0.03em] font-light text-[#F2ECE2] group-hover:text-[#C4A472] transition-colors duration-500 leading-none">
+  The Grand Icon
+</span>
+              {/* <span className="block text-[9px] tracking-[0.3em] font-mono text-[#7A7068] uppercase -mt-0.5">
                 Chandrapur
-              </span>
+              </span> */}
             </div>
           </button>
 
@@ -142,9 +142,28 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
               className="fixed top-0 right-0 h-full w-[85%] sm:w-[500px] z-[51] bg-[#161412] border-l border-[#C4A472]/20 flex flex-col justify-between p-8 md:p-12 shadow-2xl shadow-black"
             >
               <div className="flex items-center justify-between border-b border-[#C4A472]/10 pb-6">
-                <span className="font-serif text-[13px] tracking-[0.2em] text-[#F2ECE2] uppercase font-light">
-                  The Grand Icon
-                </span>
+                <button
+            id="nav-logo-btn"
+            onClick={() => handleNavClick('home')}
+            className="group flex items-center gap-2.5 cursor-pointer text-left focus:outline-none"
+          >
+            <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-[#161412] border border-[#C4A472]/40 group-hover:border-[#C4A472]/80 group-hover:scale-105 transition-all duration-500 overflow-hidden shadow-lg">
+              <img
+                src="/thegrandicon_logo.webp"
+                alt="The Grand Icon Logo"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div>
+              <span className="block font-serif text-[18px] md:text-[22px] tracking-[0.03em] font-light text-[#F2ECE2] group-hover:text-[#C4A472] transition-colors duration-500 leading-none">
+  The Grand Icon
+</span>
+              {/* <span className="block text-[9px] tracking-[0.3em] font-mono text-[#7A7068] uppercase -mt-0.5">
+                Chandrapur
+              </span> */}
+            </div>
+          </button>
                 <button
                   id="close-drawer-btn"
                   onClick={() => setIsDrawerOpen(false)}
@@ -198,7 +217,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
                   For Sanctuary Bookings
                 </span>
                 <div className="flex flex-col gap-2">
-                  <a href="tel:+919604938657" className="font-serif text-[#F2ECE2] hover:text-[#C4A472] text-sm tracking-widest transition-colors duration-500">
+                  <a href="tel:+919604938657" className="font-mono text-[#F2ECE2] hover:text-[#C4A472] text-sm tracking-widest transition-colors duration-500">
                     +91 96049 38657
                   </a>
                   <a href="mailto:concierge@thegrandicon.com" className="font-mono text-xs text-[#7A7068] hover:text-[#C4A472] transition-colors duration-500">
